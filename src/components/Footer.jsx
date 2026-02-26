@@ -96,6 +96,9 @@ const Footer = () => {
         <div className="text-center text-sm text-gray-400">
           © {new Date().getFullYear()} UrbanFix. All rights reserved.
         </div>
+        <div className="text-center text-sm text-gray-400">
+          <p>Designed and built by <span className="font-semibold">Mehedi</span></p>
+        </div>
       </div>
     </footer>
   );
