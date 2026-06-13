@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -13,81 +13,156 @@ import { app } from "../firebase/firebase.init";
 import toast, { Toaster } from "react-hot-toast";
 
 const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
 
-export const AuthContext = createContext();
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
+
+export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔁 Auth state listener (single source of truth)
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser || null);
       setLoading(false);
     });
-    return unsub;
+
+    return () => unsubscribe();
   }, []);
 
-  const registerUser = async (email, password, name, photo) => {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(res.user, { displayName: name, photoURL: photo });
-    setUser({ ...res.user });
-    toast.success("Registered");
-    return res.user;
+  // ✅ Register
+  const registerUser = async (email, password, name, photoURL) => {
+    try {
+      setLoading(true);
+
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+
+      if (name || photoURL) {
+        await updateProfile(result.user, {
+          displayName: name || "",
+          photoURL: photoURL || "",
+        });
+      }
+
+      toast.success("Account created successfully");
+      return result.user;
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ✅ Login
   const signInUser = async (email, password) => {
-    const res = await signInWithEmailAndPassword(auth, email, password);
-    setUser(res.user);
-    toast.success("Logged in");
-    return res.user;
+    try {
+      setLoading(true);
+
+      const result = await signInWithEmailAndPassword(auth, email, password);
+
+      toast.success("Logged in successfully");
+      return result.user;
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ✅ Google Login
   const signInWithGoogle = async () => {
-    const res = await signInWithPopup(auth, googleProvider);
-    setUser(res.user);
-    toast.success("Google login success");
-    return res.user;
+    try {
+      setLoading(true);
+
+      const result = await signInWithPopup(auth, googleProvider);
+
+      toast.success("Google login successful");
+      return result.user;
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ✅ Update Profile
   const updateUserProfile = async (name, photoURL) => {
     if (!auth.currentUser) return;
-    await updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL,
-    });
 
-    setUser({
-      ...auth.currentUser,
-      displayName: name,
-      photoURL,
-    });
+    try {
+      setLoading(true);
+
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+        photoURL,
+      });
+
+      // Force refresh from Firebase (avoid manual mutation bugs)
+      setUser({ ...auth.currentUser });
+
+      toast.success("Profile updated");
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const logOut = async () => {
-    await signOut(auth);
-    setUser(null);
-    toast.success("Logged out");
+  // ✅ Logout
+  const logout = async () => {
+    try {
+      setLoading(true);
+
+      await signOut(auth);
+      setUser(null);
+
+      toast.success("Logged out");
+    } catch (error) {
+      toast.error(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // memoized context value (performance improvement)
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      registerUser,
+      signInUser,
+      signInWithGoogle,
+      updateUserProfile,
+      logout,
+    }),
+    [user, loading]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        registerUser,
-        signInUser,
-        signInWithGoogle,
-        updateUserProfile,
-        logOut,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
       <Toaster position="top-right" />
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// Hook
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return context;
+};
+
 export default AuthContext;

@@ -5,29 +5,41 @@ import { XCircle } from "lucide-react";
 const PaymentCancel = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-100 to-rose-200 px-4">
-      <div className="bg-white max-w-md w-full rounded-2xl shadow-2xl p-8 text-center animate-fade-in">
-
+      <main
+        className="bg-white max-w-md w-full rounded-2xl shadow-2xl p-8 text-center"
+        role="status"
+        aria-live="polite"
+      >
+        {/* Icon */}
         <div className="flex justify-center mb-4">
-          <XCircle className="w-20 h-20 text-red-500 animate-pulse" />
+          <XCircle className="w-20 h-20 text-red-500" />
         </div>
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
-          Payment Cancelled !
+          Payment Cancelled
         </h1>
 
         {/* Message */}
-        <p className="text-gray-600 mb-6">
-          Your payment was cancelled or failed. Don’t worry — no money was deducted.
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          Your payment process was cancelled or did not complete. No charges were applied to your account.
         </p>
 
-        {/* Info Card */}
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-gray-700">
-          <p>💳 Payment Status: <span className="font-semibold text-red-600">Cancelled</span></p>
-          <p>🔁 You can try the payment again anytime.</p>
-        </div>
+        {/* Info Box */}
+        <section className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-gray-700 space-y-2 text-left">
+          <p>
+            💳 Payment Status:{" "}
+            <span className="font-semibold text-red-600">
+              Cancelled
+            </span>
+          </p>
 
-        {/* Buttons */}
+          <p>
+            🔁 You can retry the payment anytime from your account or billing section.
+          </p>
+        </section>
+
+        {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
             to="/payment"
@@ -43,7 +55,7 @@ const PaymentCancel = () => {
             Back to Home
           </Link>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

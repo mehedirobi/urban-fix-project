@@ -5,21 +5,23 @@ import Footer from "../components/Footer";
 
 const HomeLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-base-200">
-      {/* Navbar */}
-      <header>
+    <div className="min-h-screen flex flex-col bg-base-200">
+
+      {/* Header */}
+      <header className="w-full">
         <Navbar />
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer>
+      <footer className="w-full mt-auto">
         <Footer />
       </footer>
+
     </div>
   );
 };
