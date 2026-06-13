@@ -3,69 +3,122 @@ import Features from "./Features";
 import HowItWorks from "./HowItWorks";
 import LatestResolvedIssues from "./LatestResolvedIssues";
 import WhyChooseUs from "./WhyChooseUs";
-import VisionMission from "./VisionMission"
+import VisionMission from "./VisionMission";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Home = () => {
   return (
-    <div className="w-full bg-base-200">
-      {/* HERO SECTION */}
-      <section className="relative min-h-[60vh] max-h-[70vh] flex items-center justify-center text-center overflow-hidden">
-        <div className="px-4">
-          <h1 className="text-4xl md:text-5xl text-primary lg:text-6xl font-bold mb-4 drop-shadow-lg">
-            Welcome to UrbanFix
-          </h1>
+    <div className="bg-base-100">
+      {/* Hero Banner */}
+      <Banner />
 
-          <p className="max-w-2xl mx-auto text-base md:text-lg mb-8">
-            Report city issues easily, track progress transparently, and help
-            make your city cleaner, safer, and smarter.
-          </p>
+      {/* Stats Section */}
+      <section className="max-w-7xl mx-auto px-4 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-base-200 rounded-3xl p-6 text-center shadow-sm">
+            <h2 className="text-4xl font-bold text-primary">10K+</h2>
+            <p className="mt-2 text-base-content/70">
+              Issues Reported
+            </p>
+          </div>
 
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/all-issues" className="btn bg-indigo-600 text-white">
-              Explore Issues
-            </Link>
-            <Link to="/create-issue" className="btn bg-indigo-600 text-white">
-              Report an Issue
-            </Link>
+          <div className="bg-base-200 rounded-3xl p-6 text-center shadow-sm">
+            <h2 className="text-4xl font-bold text-success">95%</h2>
+            <p className="mt-2 text-base-content/70">
+              Resolution Rate
+            </p>
+          </div>
+
+          <div className="bg-base-200 rounded-3xl p-6 text-center shadow-sm">
+            <h2 className="text-4xl font-bold text-info">50+</h2>
+            <p className="mt-2 text-base-content/70">
+              Communities
+            </p>
+          </div>
+
+          <div className="bg-base-200 rounded-3xl p-6 text-center shadow-sm">
+            <h2 className="text-4xl font-bold text-warning">24/7</h2>
+            <p className="mt-2 text-base-content/70">
+              Monitoring
+            </p>
           </div>
         </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 animate-bounce text-white/80 text-xl">
-          ↓
-        </div>
       </section>
 
-      {/* Banner / Carousel (visual flow) */}
-      <section className="px-4 -mt-12">
-        <Banner />
-      </section>
-
-      {/* Latest Resolved Issues */}
-      <section className="py-10 px-4 my-6">
+      {/* Latest Issues */}
+      <section className="max-w-7xl mx-auto px-4 py-16">
         <LatestResolvedIssues />
       </section>
 
       {/* Features */}
-      <section className="py-10 px-4">
-        <Features />
+      <section className="bg-base-200">
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          <Features />
+        </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-10 px-4 my-6">
+      <section className="max-w-7xl mx-auto px-4 py-20">
         <HowItWorks />
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-10 px-4">
-        <WhyChooseUs />
+      <section className="bg-base-200">
+        <div className="max-w-7xl mx-auto px-4 py-20">
+          <WhyChooseUs />
+        </div>
       </section>
 
-      {/* Vision & Mission */}
-      <section className="py-10 px-4 my-6">
+      {/* Vision Mission */}
+      <section className="max-w-7xl mx-auto px-4 py-20">
         <VisionMission />
+      </section>
+
+      {/* Final CTA */}
+      <section className="px-4 py-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="
+            max-w-5xl
+            mx-auto
+            rounded-3xl
+            bg-primary
+            text-primary-content
+            p-10
+            md:p-16
+            text-center
+          "
+        >
+          <h2 className="text-3xl md:text-5xl font-bold mb-5">
+            Help Build a Better City
+          </h2>
+
+          <p className="max-w-2xl mx-auto mb-8 opacity-90">
+            Join thousands of citizens working together to
+            improve urban infrastructure, report issues, and
+            create cleaner, safer communities.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              to="/create-issue"
+              className="btn btn-neutral rounded-full px-8"
+            >
+              Report an Issue
+            </Link>
+
+            <Link
+              to="/all-issues"
+              className="btn btn-outline rounded-full px-8"
+            >
+              Explore Issues
+            </Link>
+          </div>
+        </motion.div>
       </section>
     </div>
   );
